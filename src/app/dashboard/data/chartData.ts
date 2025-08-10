@@ -1,0 +1,40 @@
+export const metricData = {
+  Users: [
+    { date: "2025-08-01", value: 1200 },
+    { date: "2025-08-02", value: 1350 },
+    { date: "2025-08-03", value: 1280 },
+    { date: "2025-08-04", value: 1400 },
+    { date: "2025-08-05", value: 1500 },
+    { date: "2025-08-06", value: 1450 },
+    { date: "2025-08-07", value: 1600 },
+    { date: "2025-08-08", value: 1200 },
+    
+  ],
+  Revenue: [
+    { date: "2025-08-01", value: 5200 },
+    { date: "2025-08-02", value: 6100 },
+    { date: "2025-08-03", value: 5900 },
+    { date: "2025-08-04", value: 6500 },
+    { date: "2025-08-05", value: 6800 },
+    { date: "2025-08-06", value: 6400 },
+    { date: "2025-08-07", value: 7000 },
+  ],
+  Retention: [
+    { date: "2025-08-01", value: 85 },
+    { date: "2025-08-02", value: 86 },
+    { date: "2025-08-03", value: 84 },
+    { date: "2025-08-04", value: 87 },
+    { date: "2025-08-05", value: 88 },
+    { date: "2025-08-06", value: 86 },
+    { date: "2025-08-07", value: 89 },
+  ],
+  Churn: [
+    { date: "2025-08-01", value: 5 },
+    { date: "2025-08-02", value: 5.2 },
+    { date: "2025-08-03", value: 5.1 },
+    { date: "2025-08-04", value: 4.9 },
+    { date: "2025-08-05", value: 5.0 },
+    { date: "2025-08-06", value: 4.8 },
+    { date: "2025-08-07", value: 4.7 },
+  ],
+};

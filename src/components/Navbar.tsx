@@ -1,0 +1,16 @@
+"use client"
+import { User, Settings } from "lucide-react"
+export default function Navbar() {
+    return (
+        <nav className=" fixed z-50 w-full bg-slate-800 text-white ">
+            <div className="flex justify-between items-center  h-16 mx-8">
+                <a href="/">Founder<span className="text-yellow-300 font-bold tracking-wider font-serif text-md">Pulse</span></a>
+
+                <div className="flex ">
+                    <User />
+                    <Settings />
+                </div>
+            </div>
+        </nav>
+    )
+}
