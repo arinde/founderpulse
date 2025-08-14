@@ -6,28 +6,33 @@ import { metricData } from "@/app/dashboard/data/chartData";
 import gsap from "gsap";
 import { useChartStore } from "@/app/store/ChartStore";
 
+// Type for our data points
 type ChartDataPoint = {
   date: string;
   value: number;
   category?: string;
 };
 
+// Define colors for metrics
 const metricColors: Record<string, string> = {
-  Users: "#2563eb", // blue
-  Revenue: "#16a34a", // green
-  Retention: "#f59e0b", // orange
-  Churn: "#dc2626", // red
-  value: "#2563eb", // default
+  Users: "#2563eb",      // blue
+  Revenue: "#16a34a",    // green
+  Retention: "#f59e0b",  // orange
+  Churn: "#dc2626",      // red
+  value: "#2563eb",      // default for uploaded data
 };
 
 export default function ChartSection() {
   const [activeMetric, setActiveMetric] = useState<string>("value");
   const [timeRange, setTimeRange] = useState("1W");
-  const chartRef = useRef(null);
+  const chartRef = useRef<HTMLDivElement | null>(null);
 
+  // Zustand store data
   const chartData = useChartStore((state) => state.chartData);
 
-  function filterDataByTimeRange(data: ChartDataPoint[], range: string) {
+  // Safe filter function that avoids build-time slice errors
+  function filterDataByTimeRange(data: ChartDataPoint[] | undefined, range: string) {
+    if (!data || data.length === 0) return []; // ✅ Prevents undefined.slice()
     if (range === "ALL") return data;
     if (range === "1W") return data.slice(-7);
     if (range === "1M") return data.slice(-30);
@@ -36,7 +41,7 @@ export default function ChartSection() {
     return data;
   }
 
-  // Animate chart container fade-in
+  // Fade-in animation for chart container
   useEffect(() => {
     if (chartRef.current) {
       gsap.fromTo(
@@ -47,7 +52,7 @@ export default function ChartSection() {
     }
   }, [activeMetric, timeRange]);
 
-  // Animate line color change via CSS selector
+  // Animate line color when activeMetric changes
   useEffect(() => {
     gsap.to(".chart-line path", {
       stroke: metricColors[activeMetric] || "#2563eb",
@@ -56,10 +61,10 @@ export default function ChartSection() {
     });
   }, [activeMetric]);
 
-  // Determine metrics dynamically from uploaded data
+  // Determine available metrics dynamically
   let metrics: string[] = [];
   if (chartData.length > 0) {
-    const hasCategory = chartData[0]?.category;
+    const hasCategory = "category" in chartData[0];
     metrics = hasCategory
       ? [...new Set(chartData.map((item) => item.category as string))]
       : ["value"];
@@ -69,6 +74,7 @@ export default function ChartSection() {
 
   const timeRanges = ["1W", "1M", "3M", "6M", "ALL"];
 
+  // Decide which data to show in chart
   const dataToDisplay =
     chartData.length > 0
       ? filterDataByTimeRange(
@@ -78,13 +84,13 @@ export default function ChartSection() {
           timeRange
         )
       : filterDataByTimeRange(
-          metricData[activeMetric as keyof typeof metricData] as ChartDataPoint[],
+          (metricData[activeMetric as keyof typeof metricData] as ChartDataPoint[]) || [],
           timeRange
         );
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
-      {/* Metric Buttons */}
+      {/* Metric Selector */}
       <div className="flex gap-4 mb-4">
         {metrics.map((metric) => (
           <button
@@ -119,7 +125,7 @@ export default function ChartSection() {
         </ResponsiveContainer>
       </div>
 
-      {/* Time Range Buttons */}
+      {/* Time Range Selector */}
       <div className="flex gap-3 mt-4">
         {timeRanges.map((r) => (
           <button
