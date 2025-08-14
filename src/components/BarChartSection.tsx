@@ -1,7 +1,7 @@
 "use client";
 
 import { useChartStore } from "@/app/store/ChartStore";
-import { BarChart, XAxis, Bar, Tooltip, ResponsiveContainer } from "recharts";
+import { BarChart, XAxis, Bar, ResponsiveContainer } from "recharts";
 
 export default function BarChartSection() {
     const barChartData = useChartStore((state) => state.barChartData);

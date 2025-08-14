@@ -1,6 +1,5 @@
 "use client"
-import { useEffect } from "react";
-import { useChartStore } from "@/app/store/ChartStore";
+
 import ActivityFeed from "@/components/ActivityFeed";
 import BarChartSection from "@/components/BarChartSection";
 import ChartSection from "@/components/ChartSection";

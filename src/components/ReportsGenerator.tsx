@@ -6,9 +6,7 @@ import html2canvas from "html2canvas";
 import { useState } from "react";
 
 export default function ReportGenerator() {
-  const chartData = useChartStore((state) => state.chartData);
-  const previousChartData = useChartStore((state) => state.previousChartData);
-  const insights: string | undefined = useChartStore((state) => state.insights); // we'll store AI insights in Zustand
+  const insights: string | undefined = useChartStore((state) => state.insights); 
   const [loading, setLoading] = useState(false);
 
   const generatePDF = async () => {

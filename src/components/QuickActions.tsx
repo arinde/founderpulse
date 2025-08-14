@@ -5,15 +5,14 @@ import { Upload, UserPlus, FileDown, Send } from "lucide-react";
 import { aggregateWeekly } from "@/app/utils/aggregateWeekly";
 import { aggregateCategories } from "@/app/utils/aggregateCategories";
 import { toast } from "react-toastify";
-import { useState } from "react";
+
 
 export default function QuickActions() {
   const setChartData = useChartStore((state) => state.setChartData);
   const addActivity = useActivityStore((state) => state.addActivity);
   const setBarChartData = useChartStore((state) => state.setBarChartData);
   const setPieChartData = useChartStore((state) => state.setPieChartData);
-  const [loading, setLoading] = useState(false);
-
+  
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -34,8 +33,9 @@ export default function QuickActions() {
           const headers = rows[0];
           const hasCategory = headers.includes("category");
 
-          const formattedData = rows.slice(1).map((row) => {
-            const data: { date: string; value: number; category?: string } = {
+          type DataItem = { date: string; value: number; category?: string };
+          const formattedData: DataItem[] = rows.slice(1).map((row) => {
+            const data: DataItem = {
               date: row[0],
               value: parseFloat(row[1]),
             };
@@ -59,7 +59,12 @@ export default function QuickActions() {
 
           // Pie chart data
           if (hasCategory) {
-            const categoryData = aggregateCategories(formattedData as any);
+            const categoryData = aggregateCategories(
+              formattedData.filter(
+                (item): item is { date: string; value: number; category: string } =>
+                  typeof item.category === "string"
+              )
+            );
             setPieChartData(categoryData);
           }
 
@@ -73,7 +78,8 @@ export default function QuickActions() {
           toast.error("Please upload a CSV or JSON file.");
         }
       } catch (error) {
-        toast.warning(
+        console.error("Error reading file:", error);
+        toast.error(
           "Error reading file! Please ensure it is a valid CSV or JSON file."
         );
       }
