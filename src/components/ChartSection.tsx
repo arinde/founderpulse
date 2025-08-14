@@ -82,7 +82,7 @@ export default function ChartSection(){
                         stroke={metricColors[activeMetric]} 
                         strokeWidth={2} 
                         dot={true}
-                        ref={lineRef} />
+                         />
                     </LineChart>
                 </ResponsiveContainer>
             </div>

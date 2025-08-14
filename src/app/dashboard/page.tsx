@@ -1,11 +1,18 @@
+"use client"
+import { useEffect } from "react";
+import { useChartStore } from "@/app/store/ChartStore";
 import ActivityFeed from "@/components/ActivityFeed";
 import BarChartSection from "@/components/BarChartSection";
 import ChartSection from "@/components/ChartSection";
+import InsightsPanel from "@/components/InsightsPanel";
 import KPICard from "@/components/KPICard";
+import KPITable from "@/components/KPITable";
 import PieChartSection from "@/components/PieChartSection";
 import QuickActions from "@/components/QuickActions";
+import ReportGenerator from "@/components/ReportsGenerator";
 
 export default function Dashboard() {
+
     return(
         <>
         <div>
@@ -18,7 +25,9 @@ export default function Dashboard() {
                 <BarChartSection />
                 <PieChartSection />
             </div>
-            
+            <KPITable />
+            <InsightsPanel />
+            <ReportGenerator />
         </div>
 
         

@@ -1,119 +1,133 @@
-"use client"
+"use client";
 import { useChartStore } from "@/app/store/ChartStore";
 import { useActivityStore } from "@/app/store/ActivityStore";
-import { Upload, UserPlus, FileDown, Send } from "lucide-react"
+import { Upload, UserPlus, FileDown, Send } from "lucide-react";
 import { aggregateWeekly } from "@/app/utils/aggregateWeekly";
 import { aggregateCategories } from "@/app/utils/aggregateCategories";
 import { toast } from "react-toastify";
 import { useState } from "react";
 
 export default function QuickActions() {
-    const setChartData = useChartStore((state) => state.setChartData);
-    const addActivity = useActivityStore((state) => state.addActivity);
-    const setBarChartData =  useChartStore((state) => state.setBarChartData);
-    const setPieChartData =  useChartStore((state) => state.setPieChartData)
-    const [loading, setLoading] = useState(false);
+  const setChartData = useChartStore((state) => state.setChartData);
+  const addActivity = useActivityStore((state) => state.addActivity);
+  const setBarChartData = useChartStore((state) => state.setBarChartData);
+  const setPieChartData = useChartStore((state) => state.setPieChartData);
+  const [loading, setLoading] = useState(false);
 
-    const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (!file) return;
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
 
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            try {
-                const text = e.target?.result as string;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const text = e.target?.result as string;
 
-                // If JSON file
-                if (file.name.endsWith(".json")) {
-                const jsonData = JSON.parse(text);
-                setChartData(jsonData);
-                }
-                // If CSV file
-                else if (file.name.endsWith(".csv")) {
-                const rows = text.split("\n").map((row) => row.split(","));
-                const headers = rows[0];
-                const hasCategory = headers.includes("category");
-                const formattedData = rows.slice(1).map((row) => {
-                    const data: { date: string; value: number; category?: string } = {
-                        date: row[0],
-                        value: parseFloat(row[1]),
-                    };
-                    if (hasCategory && row[2]) {
-                        data.category = row[2];
-                    }
-                    return data;
-                });
-                
-                //line data
-                setChartData(
-                    formattedData.map((item) => ({
-                        date: item.date,
-                        value: item.value,
-                    }))
-                );
+        // JSON upload
+        if (file.name.endsWith(".json")) {
+          const jsonData = JSON.parse(text);
+          setChartData(jsonData);
+        }
+        // CSV upload
+        else if (file.name.endsWith(".csv")) {
+          const rows = text.split("\n").map((row) => row.split(","));
+          const headers = rows[0];
+          const hasCategory = headers.includes("category");
 
-                //bar chart data
-                const weeklyData = aggregateWeekly(
-                    formattedData.map((item) => ({
-                        date: item.date,
-                        value: item.value,
-                    }))
-                );
-                setBarChartData(weeklyData);
-
-                //pie chart function
-                if (hasCategory) {
-                    const categoryData = aggregateCategories(formattedData as any);
-                    setPieChartData(categoryData);
-                }
-
-                //add activity
-                addActivity(
-                    `Uploaded new data (${file.name}) — ${formattedData.length} records`
-                );
-
-                toast.success("Data Succesfully Uploaded")
-                } else {
-                toast.error("Please upload a CSV or JSON file.");
-                }
-            } catch (error) {
-                toast.warning("Error reading file! Please ensure it is a valid CSV or JSON file.");
+          const formattedData = rows.slice(1).map((row) => {
+            const data: { date: string; value: number; category?: string } = {
+              date: row[0],
+              value: parseFloat(row[1]),
+            };
+            if (hasCategory && row[2]) {
+              data.category = row[2];
             }
-        };
+            return data;
+          });
 
-        reader.readAsText(file);
+          // ✅ Store the full dataset (date, value, category if available)
+          setChartData(formattedData);
+
+          // Bar chart data
+          const weeklyData = aggregateWeekly(
+            formattedData.map((item) => ({
+              date: item.date,
+              value: item.value,
+            }))
+          );
+          setBarChartData(weeklyData);
+
+          // Pie chart data
+          if (hasCategory) {
+            const categoryData = aggregateCategories(formattedData as any);
+            setPieChartData(categoryData);
+          }
+
+          // Add to activity log
+          addActivity(
+            `Uploaded new data (${file.name}) — ${formattedData.length} records`
+          );
+
+          toast.success("Data Successfully Uploaded");
+        } else {
+          toast.error("Please upload a CSV or JSON file.");
+        }
+      } catch (error) {
+        toast.warning(
+          "Error reading file! Please ensure it is a valid CSV or JSON file."
+        );
+      }
     };
-    const actions = [
-        {label: "Upload Data", label2: "Uploading Data...", icon: <Upload size={20} />, onClick: () => document.getElementById("fileInput")?.click()},
-        {label: "Invite Team", icon: <UserPlus size={20} />, onClick: () => toast.success("Invite Team")},
-        {label: "Export Report", icon: <FileDown size={20} />, onClick: () => alert("Export Report")},
-        {label: "Send Update", icon: <Send size={20} />, onClick: () => alert("Send Update")}
-    ]
 
-    
+    reader.readAsText(file);
+  };
 
-    return(
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
-            <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
-            <input
-                id="fileInput"
-                type="file"
-                accept=".csv, .json"
-                onChange={handleFileUpload}
-                className="hidden"
-            />
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {actions.map((action, index) => (
-                <button
-                    key={index}
-                    onClick={action.onClick}
-                    className="flex items-center gap-2 p-4 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition"
-                >
-                    {action.icon}
-                    <span>{action.label}</span>
-                </button>
-                ))}
-            </div>
-        </div>
-    );
+  const actions = [
+    {
+      label: "Upload Data",
+      label2: "Uploading Data...",
+      icon: <Upload size={20} />,
+      onClick: () => document.getElementById("fileInput")?.click(),
+    },
+    {
+      label: "Invite Team",
+      icon: <UserPlus size={20} />,
+      onClick: () => toast.success("Invite Team"),
+    },
+    {
+      label: "Export Report",
+      icon: <FileDown size={20} />,
+      onClick: () => alert("Export Report"),
+    },
+    {
+      label: "Send Update",
+      icon: <Send size={20} />,
+      onClick: () => alert("Send Update"),
+    },
+  ];
+
+  return (
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+      <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
+      <input
+        id="fileInput"
+        type="file"
+        accept=".csv, .json"
+        onChange={handleFileUpload}
+        className="hidden"
+      />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {actions.map((action, index) => (
+          <button
+            key={index}
+            onClick={action.onClick}
+            className="flex items-center gap-2 p-4 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition"
+          >
+            {action.icon}
+            <span>{action.label}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 }

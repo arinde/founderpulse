@@ -1,26 +1,30 @@
+"use client";
+
 import { create } from "zustand";
 
-type DataPoint ={
-    date: string;
-    value: number;
-}
-type PieData = {
-    name: string;
-    value: number;
-}
+export type DataPoint = { date: string; value: number; category?: string };
+export type WeeklyPoint = { date: string; value: number };
+export type PieData = { name: string; value: number };
 
-interface ChartState {
-    chartData: DataPoint[];
-    setChartData: (data: DataPoint[]) => void;
-    barChartData: DataPoint[];
-    setBarChartData: (data: DataPoint[]) => void;
-    pieChartData: PieData[];
-    setPieChartData: (data: PieData[]) => void;
-}
+type ChartState = {
+  chartData: DataPoint[];
+  previousChartData: DataPoint[];
+  barChartData: WeeklyPoint[];
+  pieChartData: PieData[];
+  insights: string;
+
+  setChartData: (data: DataPoint[]) => void;
+  setPreviousChartData: (data: DataPoint[]) => void;
+  setBarChartData: (data: WeeklyPoint[]) => void;
+  setPieChartData: (data: PieData[]) => void;
+  setInsights: (text: string) => void;
+  resetAll: () => void;
+};
 
 export const useChartStore = create<ChartState>((set) => ({
-    chartData: [],
-    barChartData: [
+  chartData: [],
+  previousChartData: [],
+  barChartData: [
         { date: "week 1", value: 120 },
         { date: "Week 2", value: 200 },
         { date: "Week 3", value: 150 },
@@ -39,7 +43,22 @@ export const useChartStore = create<ChartState>((set) => ({
     { name: "Product E", value: 150 },
     { name: "Product F", value: 300 },
   ],
-    setBarChartData: (data) => set({ barChartData: data }),
-    setChartData: (data) => set({ chartData: data }),
-    setPieChartData: (data) => set({pieChartData : data}),
+  insights: "",
+
+  setChartData: (data) => set({ chartData: data }),
+  setPreviousChartData: (data) => set({ previousChartData: data }),
+  setBarChartData: (data) => set({ barChartData: data }),
+  setPieChartData: (data) => set({ pieChartData: data }),
+  setInsights: (text) => set({ insights: text }),
+
+  resetAll: () =>
+    set({
+      chartData: [],
+      previousChartData: [],
+      barChartData: [],
+      pieChartData: [],
+      insights: "",
+    }),
 }));
+
+    
