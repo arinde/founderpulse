@@ -32,7 +32,7 @@ export default function Login() {
 
   return(
     <>
-        <Tabs defaultValue="profile" className="w-[10px]">
+        <Tabs defaultValue="profile">
             <TabsList>
               <TabsTrigger value="profile">Login</TabsTrigger>
               <TabsTrigger value="settings">Register</TabsTrigger>
