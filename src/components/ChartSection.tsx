@@ -89,7 +89,7 @@ export default function ChartSection() {
         );
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md p-6">
+    <div className="bg-gray-800 rounded-sm shadow-md p-6 mt-4 mx-2">
       {/* Metric Selector */}
       <div className="flex gap-4 mb-4">
         {metrics.map((metric) => (

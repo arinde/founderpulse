@@ -30,9 +30,9 @@ export default function KPICard(){
         }
     ]
     return(
-        <div id="line-chart" className="border border-blue-400 rounded-lg shadow-md mx-3 p-4 mt-4 bg-yellow-100">
+        <div id="line-chart" className="border border-blue-400 rounded-lg shadow-md mx-3 p-4 mt-4 bg-gray-300">
             <p className="font-serif font-bold tracking-wide text-yellow-1 text-xl">KPI Cards Row</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4">
                 {KPI.map((kpis) => (
                     <Card key={kpis.title}>
                         <span className="text-sm text-gray-600 dark:text-gray-400">{kpis.title}</span>
